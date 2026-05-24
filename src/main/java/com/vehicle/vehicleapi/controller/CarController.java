@@ -4,6 +4,8 @@ import com.vehicle.vehicleapi.service.CarService;
 import com.vehicle.vehicleapi.model.Car;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -19,43 +21,48 @@ public class CarController {
 
     // get all cars in /cars
     @GetMapping
-    public List<Car> getAllCars(){
-        return service.getAllCars();
+    public ResponseEntity<List<Car>> getAllCars(){
+        return ResponseEntity.ok(service.getAllCars());
     }
 
     //get specified car in /cars/{ticket}
     @GetMapping("/{ticket}")
-    public Car getCar(@PathVariable int ticket){
-        return service.getCarByTicket(ticket);
+    public ResponseEntity<Car> getCar(@PathVariable int ticket){
+        Car car = service.getCarByTicket(ticket);
+        if (car == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(car);
     }
 
     // post to /cars or add
     @PostMapping
-    public void addCar(@RequestBody Car car){
+    public ResponseEntity<String> addCar(@Valid@RequestBody Car car){
         service.addCar(car);
+        return ResponseEntity.ok("Vehicle Added Successfully!");
     }
 
     // deletes car based on ticket in /cars/{ticket}
     @DeleteMapping("/{ticket}")
-    public String deleteCar(@PathVariable int ticket){
+    public ResponseEntity<String> deleteCar(@PathVariable int ticket){
         boolean deleted = service.deleteCar(ticket);
         if (deleted){
-            return "Vehicle Deleted Successfullt!";
+            return ResponseEntity.ok("Vehicle Deleted Successfully!");
         }
-        return "Vehicle Not Found!";
+        return ResponseEntity.notFound().build();
     }
 
     // update using put
     @PutMapping("/{ticket}")
-    public String updateCar(
+    public ResponseEntity<String> updateCar(
         @PathVariable int ticket,
-        @RequestBody Car updatedCar
+        @Valid@RequestBody Car updatedCar
     ){
         boolean updated = service.updateCar(ticket, updatedCar);
 
         if(updated){
-            return "Vehicle Updated Successfully!";
+            return ResponseEntity.ok("Vehicle Updated!");
         }
-        return "Vehicle Not Found!";
+        return ResponseEntity.notFound().build();
     }
 }

@@ -1,32 +1,38 @@
 package com.vehicle.vehicleapi.service;
 
 import com.vehicle.vehicleapi.model.Car;
+import com.vehicle.vehicleapi.repository.CarRepository;
+
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CarService {
-    private final List<Car> cars = new ArrayList<>();
+    private final CarRepository repository;
+
+    public CarService(CarRepository repository){
+        this.repository = repository;
+    }
 
     public List<Car> getAllCars(){
-        return cars;
+        return repository.findAll();
     }
 
     public Car getCarByTicket(int ticket){
-        return cars.stream()
+        return repository.findAll()
+                .stream()
                 .filter(car -> car.getTicket() == ticket)
                 .findFirst()
                 .orElse(null);
     }
 
     public void addCar(Car car){
-        cars.add(car);
+        repository.saveCar(car);
     }
 
     public boolean deleteCar(int ticket){
-        return cars.removeIf(car -> car.getTicket() == ticket);
+        return repository.deleteByTicket(ticket);
     }
 
     public boolean updateCar(int ticket, Car car){

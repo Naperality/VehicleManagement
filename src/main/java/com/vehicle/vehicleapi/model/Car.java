@@ -1,9 +1,14 @@
 package com.vehicle.vehicleapi.model;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class Car {
     private int ticket;
+    @NotBlank(message = "License Plate is Required!")
     private String licensePlate;
+    @NotBlank(message = "Brand is Required!")
     private String brand;
+    @NotBlank(message = "Model is Required!")
     private String model;
     private String color;
     private String fuelType;
