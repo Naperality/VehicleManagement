@@ -7,6 +7,7 @@ import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.dto.ApiResponse;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 
@@ -37,7 +38,7 @@ public class CarController {
 
     //get specified car in /cars/{ticket}
     @GetMapping("/{ticket}")
-    public ResponseEntity<ApiResponse<Car>> getCar(@PathVariable int ticket){
+    public ResponseEntity<ApiResponse<Car>> getCar(@PathVariable Long ticket){
         Car car = service.getCarByTicket(ticket);
         // if (car == null){
         //     return ResponseEntity.notFound().build();
@@ -63,12 +64,12 @@ public class CarController {
                         null
                 );
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // deletes car based on ticket in /cars/{ticket}
     @DeleteMapping("/{ticket}")
-    public ResponseEntity<ApiResponse<Void>> deleteCar(@PathVariable int ticket){
+    public ResponseEntity<ApiResponse<Void>> deleteCar(@PathVariable Long ticket){
         // boolean deleted = service.deleteCar(ticket);
         // if (deleted){
         //     return ResponseEntity.ok("Vehicle Deleted Successfully!");
@@ -88,7 +89,7 @@ public class CarController {
     // update using put
     @PutMapping("/{ticket}")// can use PatchMapping("/{ticket}") for semantically correct
     public ResponseEntity<ApiResponse<Void>> updateCar(
-        @PathVariable int ticket,
+        @PathVariable Long ticket,
         @Valid@RequestBody UpdateCarRequest updatedCar
     ){
         // boolean updated = service.updateCar(ticket, updatedCar);
