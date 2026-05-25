@@ -1,20 +1,25 @@
 package com.vehicle.vehicleapi.model;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 
+// Create Entity to Table cars
+@Entity
+@Table(name = "cars")
 public class Car {
-    private int ticket;
-    @NotBlank(message = "License Plate is Required!")
+    // Automatic Create ID's
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ticket;
+
     private String licensePlate;
-    @NotBlank(message = "Brand is Required!")
     private String brand;
-    @NotBlank(message = "Model is Required!")
     private String model;
     private String color;
     private String fuelType;
 
+    public Car() {} // for JPA, Hibernate internally creates objects dynamically.
     public Car(
-        int ticket,
+        Long ticket,
         String licensePlate,
         String brand,
         String model,
@@ -30,7 +35,7 @@ public class Car {
     }
 
     // getters
-    public int getTicket(){
+    public Long getTicket(){
         return ticket;
     }
     public String getLicensePlate(){
@@ -50,9 +55,9 @@ public class Car {
     }
 
     // setters
-    public void setTicket(int ticket){
-        this.ticket = ticket;
-    }
+    // public void setTicket(Long ticket){
+    //     this.ticket = ticket;
+    // } -- this is now useless cause it is an id and should not be changed
     public void setLicensePlate(String licensePlate){
         this.licensePlate = licensePlate;
     }
