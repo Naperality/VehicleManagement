@@ -4,17 +4,22 @@ import jakarta.persistence.*;
 
 // Create Entity to Table cars
 @Entity
-@Table(name = "cars")
+@Table(name = "cars")// created table cars
 public class Car {
     // Automatic Create ID's
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ticket;
 
+    @Column(name = "license_plate")// explicit column instead of hibernate auto
     private String licensePlate;
+    @Column(name = "brand")
     private String brand;
+    @Column(name = "model")
     private String model;
+    @Column(name = "color")
     private String color;
+    @Column(name = "fuel_type")
     private String fuelType;
 
     public Car() {} // for JPA, Hibernate internally creates objects dynamically.
