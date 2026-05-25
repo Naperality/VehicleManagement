@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 @Repository
-public interface CarRepository extends JpaRepository<Car, Integer>{
+public interface CarRepository extends JpaRepository<Car, Long>{
     // private final List<Car> cars = new ArrayList<>();
 
     // public List<Car> findAll(){

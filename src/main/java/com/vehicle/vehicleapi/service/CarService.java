@@ -22,7 +22,7 @@ public class CarService {
         return repository.findAll();// using JPA findAll or show all data in table or repo
     }
 
-    public Car getCarByTicket(int ticket){
+    public Car getCarByTicket(Long ticket){
         // return repository.findAll()
         //         .stream()
         //         .filter(car -> car.getTicket() == ticket)
@@ -48,7 +48,7 @@ public class CarService {
         repository.save(car);// add car using JPA database postgresql
     }
 
-    public void deleteCar(int ticket){
+    public void deleteCar(Long ticket){
         if (!repository.existsById(ticket)){
             throw new CarNotFoundException(
                 "Vehicle not found with ticket: "+ticket
@@ -57,7 +57,7 @@ public class CarService {
         repository.deleteById(ticket);// delete using JPA database postgresql
     }
 
-    public void updateCar(int ticket, UpdateCarRequest request){
+    public void updateCar(Long ticket, UpdateCarRequest request){
         Car existing = getCarByTicket(ticket);// --does not need the throw exception due to getCarByticket
         // Check if not null to update specifics only
         
