@@ -5,8 +5,12 @@ import com.vehicle.vehicleapi.repository.CarRepository;
 import com.vehicle.vehicleapi.dto.CreateCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.exception.CarNotFoundException;
+import com.vehicle.vehicleapi.exception.CarAlreadyExistException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+// import org.springframework.web.servlet.FlashMap;
 
 import java.util.List;
 
@@ -18,8 +22,8 @@ public class CarService {
         this.repository = repository;
     }
 
-    public List<Car> getAllCars(){
-        return repository.findAll();// using JPA findAll or show all data in table or repo
+    public Page<Car> getAllCars(Pageable pageable){
+        return repository.findAll(pageable);// using JPA findAll or show all data in table or repo
     }
 
     public Car getCarByTicket(Long ticket){
@@ -37,8 +41,15 @@ public class CarService {
 
     public void addCar(CreateCarRequest request){
         // ORM - Object relational Mapping
+        if(repository.findByLicensePlate(
+                    request.getLicensePlate()
+                ).isPresent()){
+                throw new CarAlreadyExistException(
+                        "Car already exists with plate: "
+                        + request.getLicensePlate()
+                );
+            }
         Car car = new Car();
-
         car.setLicensePlate(request.getLicensePlate());
         car.setBrand(request.getBrand());
         car.setModel(request.getModel());
@@ -82,5 +93,96 @@ public class CarService {
         }
         
         repository.save(existing);
+    }
+
+    // using the own methods in repo
+    public Car getByLicensePlate(String licensePlate){
+        return repository
+                .findByLicensePlate(licensePlate)
+                .orElseThrow(
+                    () -> new CarNotFoundException(
+                        "Vehicle Not Found!"
+                    )
+                );
+    }
+
+    public Page<Car> getByBrand(String brand, Pageable pageable){
+        Page<Car> cars = repository.findByBrand(brand, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with "+brand
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getByModel(String model, Pageable pageable){
+        Page<Car> cars = repository.findByModel(model, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with "+model
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getByFuelType(String fuel, Pageable pageable){
+        Page<Car> cars = repository.findByFuelType(fuel, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with "+fuel
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getByColor(String color, Pageable pageable){
+        Page<Car> cars = repository.findByColor(color, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with "+color
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getByBrandAndColor(String brand, String color, Pageable pageable){
+        Page<Car> cars = repository.findByBrandAndColor(brand,color, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with brand of "+brand+" and color of "+color
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getBrandContaining(String brand, Pageable pageable){
+        Page<Car> cars = repository.findByBrandContaining(brand, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with brand of "+brand
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getBrandStartingWith(String brand, Pageable pageable){
+        Page<Car> cars = repository.findByBrandStartingWith(brand, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with brand starting with "+brand
+            );
+        }
+        return cars;
+    }
+
+    public Page<Car> getBrandEndingWith(String brand, Pageable pageable){
+        Page<Car> cars = repository.findByBrandEndingWith(brand, pageable);
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles found with brand ending with "+brand
+            );
+        }
+        return cars;
     }
 }
