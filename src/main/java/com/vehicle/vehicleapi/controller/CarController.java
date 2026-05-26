@@ -9,6 +9,9 @@ import com.vehicle.vehicleapi.dto.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -25,12 +28,14 @@ public class CarController {
 
     // get all cars in /cars
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Car>>> getAllCars(){
-        ApiResponse<List<Car>> response =
+    public ResponseEntity<ApiResponse<Page<Car>>> getAllCars(
+        Pageable pageable
+    ){
+        ApiResponse<Page<Car>> response =
                 new ApiResponse<>(
                         true,
                         "Vehicles retrieved successfully",
-                        service.getAllCars()
+                        service.getAllCars(pageable)
                 );
 
         return ResponseEntity.ok(response);
@@ -107,6 +112,81 @@ public class CarController {
                         null
                 );
 
+        return ResponseEntity.ok(response);
+    }
+
+    // add new end point for new created methods
+    @GetMapping("/plate/{plate}")
+    public ResponseEntity<ApiResponse<Car>> getByPlate(
+        @PathVariable String plate
+    ){
+        Car car = service.getByLicensePlate(plate);
+  
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Vehicles Found!",
+                        car
+                )
+        );
+    }
+
+    @GetMapping("/brand/{brand}")
+    public ResponseEntity<ApiResponse<Page<Car>>>  getByBrand(
+        @PathVariable String brand, Pageable pageable
+    ){
+        Page<Car> cars = service.getByBrand(brand, pageable);
+        ApiResponse<Page<Car>> response = 
+                new ApiResponse<>(
+                        true,
+                        "Vehicles Found!",
+                        cars
+                );
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/model/{model}")
+    public ResponseEntity<ApiResponse<Page<Car>>> getByModel(
+        @PathVariable String model, Pageable pageable
+    ){
+        Page<Car> cars = service.getByModel(model, pageable);
+        ApiResponse<Page<Car>> response = 
+                new ApiResponse<>(
+                        true,
+                        "Vehicles Found!",
+                        cars
+                );
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/fuel/{fuel}")
+    public ResponseEntity<ApiResponse<Page<Car>>> getByFuel(
+        @PathVariable String fuel,Pageable pageable
+    ){
+        Page<Car> cars = service.getByFuelType(fuel, pageable);
+        ApiResponse<Page<Car>> response = 
+                new ApiResponse<>(
+                        true,
+                        "Vehicles Found!",
+                        cars
+                );
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/color/{color}")
+    public ResponseEntity<ApiResponse<Page<Car>>> getByColor(
+        @PathVariable String color, Pageable pageable
+    ){
+        Page<Car> cars = service.getByColor(color, pageable);
+        ApiResponse<Page<Car>> response = 
+                new ApiResponse<>(
+                        true,
+                        "Vehicles Found!",
+                        cars
+                );
+        
         return ResponseEntity.ok(response);
     }
 }
