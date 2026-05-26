@@ -28,6 +28,24 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(CarAlreadyExistException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleCarAlreadyExist(
+            CarAlreadyExistException ex
+    ){
+
+        ApiResponse<Void> response =
+                new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
     @ExceptionHandler(
             MethodArgumentNotValidException.class
     )
