@@ -3,8 +3,10 @@ package com.vehicle.vehicleapi.controller;
 import com.vehicle.vehicleapi.service.CarService;
 import com.vehicle.vehicleapi.model.Car;
 import com.vehicle.vehicleapi.dto.CreateCarRequest;
+import com.vehicle.vehicleapi.dto.SearchCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.dto.ApiResponse;
+import com.vehicle.vehicleapi.dto.CarResponse;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -14,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
+// import java.util.List;
 
 @RestController // Handles HTTP requests
 @RequestMapping("/cars") // maps out the specified area
@@ -187,6 +189,37 @@ public class CarController {
                         cars
                 );
         
+        return ResponseEntity.ok(response);
+    }
+
+    // Endpoint for searching
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<Car>>> searchCars(
+        SearchCarRequest request,
+        Pageable pageable
+    ){
+        Page<Car> cars = service.searchCars(request, pageable);
+        ApiResponse<Page<Car>> response = 
+                        new ApiResponse<>(
+                                true,
+                                "Vehicles Found!",
+                                cars
+                        );
+        return ResponseEntity.ok(response);
+    }
+
+    // Endpoint for user and his/her cars
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<Page<Car>>> getCarsByUser(
+        @PathVariable Long userId, Pageable pageable
+    ){
+        Page<Car> cars = service.getCarsByUser(userId, pageable);
+        ApiResponse<Page<Car>> response = 
+                        new ApiResponse<>(
+                                true,
+                                "Users Vehicles Found!",
+                                cars
+                        );
         return ResponseEntity.ok(response);
     }
 }
