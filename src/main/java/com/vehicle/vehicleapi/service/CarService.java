@@ -1,25 +1,32 @@
 package com.vehicle.vehicleapi.service;
 
+import com.vehicle.vehicleapi.model.User;
 import com.vehicle.vehicleapi.model.Car;
 import com.vehicle.vehicleapi.repository.CarRepository;
+import com.vehicle.vehicleapi.repository.UserRepository;
+import com.vehicle.vehicleapi.dto.CarResponse;
 import com.vehicle.vehicleapi.dto.CreateCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
+import com.vehicle.vehicleapi.dto.SearchCarRequest;
 import com.vehicle.vehicleapi.exception.CarNotFoundException;
 import com.vehicle.vehicleapi.exception.CarAlreadyExistException;
+import com.vehicle.vehicleapi.exception.UserNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 // import org.springframework.web.servlet.FlashMap;
 
-import java.util.List;
+// import java.util.List;
 
 @Service
 public class CarService {
     private final CarRepository repository;
+    private final UserRepository userRepository;
 
-    public CarService(CarRepository repository){
+    public CarService(CarRepository repository, UserRepository userRepository){
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     public Page<Car> getAllCars(Pageable pageable){
@@ -40,6 +47,11 @@ public class CarService {
     }
 
     public void addCar(CreateCarRequest request){
+        User user = userRepository.findById(1L).orElseThrow(
+            () -> new UserNotFoundException(
+                "User not Found!"
+            )
+        );
         // ORM - Object relational Mapping
         if(repository.findByLicensePlate(
                     request.getLicensePlate()
@@ -50,6 +62,7 @@ public class CarService {
                 );
             }
         Car car = new Car();
+        car.setUser(user);
         car.setLicensePlate(request.getLicensePlate());
         car.setBrand(request.getBrand());
         car.setModel(request.getModel());
@@ -184,5 +197,34 @@ public class CarService {
             );
         }
         return cars;
+    }
+
+    // one service search using JPQL and Native
+    public Page<Car> searchCars(SearchCarRequest request, Pageable pageable){
+        Page<Car> cars = repository.searchCars(
+            request.getLicensePlate(),
+            request.getBrand(), 
+            request.getModel(), 
+            request.getColor(), 
+            request.getFuelType(), 
+            pageable);
+
+        if(cars.isEmpty()){
+            throw new CarNotFoundException(
+                "No Vehicles Found!"
+            );
+        }
+        return cars;
+    }
+
+    // service for cheking user and its specified cars
+    public Page<Car> getCarsByUser( Long userId, Pageable pageable){
+        Page<Car> userCars = repository.findByUserId(userId, pageable);
+        if(userCars.isEmpty()){
+            throw new UserNotFoundException(
+                "User not Found!"
+            );
+        }
+        return userCars;
     }
 }
