@@ -28,6 +28,43 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleUserNotFound(
+            UserNotFoundException ex
+    ){
+
+        ApiResponse<Void> response =
+                new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleUserAlreadyFound(
+            UserAlreadyExistException ex
+    ){
+
+        ApiResponse<Void> response =
+                new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+
     @ExceptionHandler(CarAlreadyExistException.class)
     public ResponseEntity<ApiResponse<Void>>
     handleCarAlreadyExist(
