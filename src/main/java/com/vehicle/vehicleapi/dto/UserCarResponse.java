@@ -7,24 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarResponse {
-
+public class UserCarResponse {
+    
     @Schema(example = "1")
     private Long ticket;
 
     @Schema(example = "ABC123")
     private String licensePlate;
 
-    @Schema(example = "Toyota")
-    private String brand;
-
-    @Schema(example = "Civic")
-    private String model;
-
-    @Schema(example = "Black")
-    private String color;
-    
-    @Schema(example = "Gasoline")
-    private String fuelType;
-    
 }

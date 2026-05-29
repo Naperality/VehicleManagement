@@ -1,13 +1,23 @@
 package com.vehicle.vehicleapi.dto;
 
 import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(
+    description = "API creation request"
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse<T> {
+
+    @Schema(example = "true")
     private boolean success;
+
+    @Schema(example = "Created Successfully!")
     private String message;
+    
+    @Schema(example = "null")
     private T data;
 
     //Due to lombok again
