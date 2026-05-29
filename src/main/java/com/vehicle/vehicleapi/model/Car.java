@@ -1,7 +1,5 @@
 package com.vehicle.vehicleapi.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.*;
 import lombok.*; // this is the shortcut for getters and setters and etc.
 
@@ -17,7 +15,11 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ticket;
 
-    @Column(name = "license_plate")// explicit column instead of hibernate auto
+    @Column(
+        name = "license_plate",
+        unique = true,
+        nullable = false
+    )// explicit column instead of hibernate auto
     private String licensePlate;
     @Column(name = "brand")
     private String brand;

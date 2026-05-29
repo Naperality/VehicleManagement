@@ -4,7 +4,6 @@ import com.vehicle.vehicleapi.model.User;
 import com.vehicle.vehicleapi.model.Car;
 import com.vehicle.vehicleapi.repository.CarRepository;
 import com.vehicle.vehicleapi.repository.UserRepository;
-import com.vehicle.vehicleapi.dto.CarResponse;
 import com.vehicle.vehicleapi.dto.CreateCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.dto.SearchCarRequest;

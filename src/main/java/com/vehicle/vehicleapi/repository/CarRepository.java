@@ -1,6 +1,5 @@
 package com.vehicle.vehicleapi.repository;
 
-import com.vehicle.vehicleapi.dto.CarResponse;
 import com.vehicle.vehicleapi.model.Car;
 
 import org.springframework.stereotype.Repository;
@@ -49,6 +48,11 @@ public interface CarRepository extends JpaRepository<Car, Long>{
 
     Page<Car> findByUserId(Long userId, Pageable pageable);
     Optional<Car> findByTicketAndUserId(Long ticket, Long userId);
+    
+    boolean existsByLicensePlateAndTicketNot(
+        String licensePlate,
+        Long ticket
+    );
     // JPQL or Java Persistence Query Language, uses objects instead of tables
     @Query("""
             SELECT c

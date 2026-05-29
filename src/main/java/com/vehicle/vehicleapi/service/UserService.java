@@ -8,6 +8,7 @@ import com.vehicle.vehicleapi.dto.CreateCarRequest;
 import com.vehicle.vehicleapi.dto.CreateUserRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateUserRequest;
+import com.vehicle.vehicleapi.dto.UserSummaryResponse;
 import com.vehicle.vehicleapi.exception.CarAlreadyExistException;
 import com.vehicle.vehicleapi.exception.CarNotFoundException;
 import com.vehicle.vehicleapi.exception.UserAlreadyExistException;
@@ -28,25 +29,33 @@ public class UserService {
     }
     // adding users
     public void createUser(CreateUserRequest request){
-        boolean alreadyExist = repository.findByEmail(request.getEmail()).isPresent() || 
-                               repository.findByUsername(request.getUsername()).isPresent();
-        if(alreadyExist){
+        String email = request.getEmail().toLowerCase();
+        String username = request.getUsername();
+
+        if(repository.findByEmail(email).isPresent()){
             throw new UserAlreadyExistException(
-                "User email or username is already taken!"
+                "Email already taken!"
             );
         }
+
+        if(repository.findByUsername(username).isPresent()){
+            throw new UserAlreadyExistException(
+                "Username already taken!"
+            );
+        }
+
         User user = new User();
-        user.setEmail(request.getEmail());
+        user.setEmail(email);
         user.setPassword(request.getPassword());
-        user.setUsername(request.getUsername());
+        user.setUsername(username);
         user.setRole(request.getRole());
 
         repository.save(user);
     }
 
     // getting all users
-    public Page<User> getAllUser(Pageable pageable){
-        Page<User> users = repository.findAll(pageable);
+    public Page<UserSummaryResponse> getAllUser(Pageable pageable){
+        Page<UserSummaryResponse> users = repository.findAllUserResponses(pageable);
         if(users.isEmpty()){
             throw new UserNotFoundException(
                 "No Users Found!"
@@ -68,11 +77,39 @@ public class UserService {
     public void updateUser(Long id, UpdateUserRequest request){
         User user = getUserById(id);
 
+        if(request.getEmail() != null &&
+        repository.existsByEmailAndIdNot(
+            request.getEmail().toLowerCase(),
+            id
+        )){
+
+            throw new UserAlreadyExistException(
+                "Email already taken!"
+            );
+        }
+        if(request.getUsername() != null &&
+        repository.existsByUsernameAndIdNot(
+            request.getUsername(),
+            id
+        )){
+
+            throw new UserAlreadyExistException(
+                "Username already taken!"
+            );
+        }
+        // boolean alreadyExist = repository.findByEmail(request.getEmail().toLowerCase()).isPresent() || 
+        //                        repository.findByUsername(request.getUsername()).isPresent();
+        // if(alreadyExist){
+        //     throw new UserAlreadyExistException(
+        //         "User email or username is already taken!"
+        //     );
+        // } -- risky due to nullable values
+
         if(request.getUsername() != null){
             user.setUsername(request.getUsername());
         }
         if(request.getEmail() != null){
-            user.setEmail(request.getEmail());
+            user.setEmail(request.getEmail().toLowerCase());
         }
         if(request.getRole() != null){
             user.setRole(request.getRole());
@@ -129,6 +166,16 @@ public class UserService {
                         "Vehicle not found on this user!"
                     )
                 );
+        if(request.getLicensePlate() != null &&
+            carRepository.existsByLicensePlateAndTicketNot(
+                request.getLicensePlate(),
+                ticket
+            )){
+
+            throw new CarAlreadyExistException(
+                "License plate already exists!"
+            );
+        }
         if(request.getBrand() != null){
             car.setBrand(request.getBrand());
         }
