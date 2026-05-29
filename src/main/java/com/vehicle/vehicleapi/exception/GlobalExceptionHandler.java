@@ -10,6 +10,23 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RoleOutOfChoiceException.class)
+    public ResponseEntity<ApiResponse<Void>>
+    handleRoleOutOfChoice(
+            RoleOutOfChoiceException ex
+    ){
+
+        ApiResponse<Void> response =
+                new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
     @ExceptionHandler(CarNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>>
     handleCarNotFound(
@@ -60,7 +77,7 @@ public class GlobalExceptionHandler {
                 );
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.FOUND)
                 .body(response);
     }
 
@@ -79,7 +96,7 @@ public class GlobalExceptionHandler {
                 );
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.FOUND)
                 .body(response);
     }
 
