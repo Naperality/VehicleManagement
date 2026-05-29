@@ -6,7 +6,6 @@ import com.vehicle.vehicleapi.dto.CreateCarRequest;
 import com.vehicle.vehicleapi.dto.SearchCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.dto.ApiResponse;
-import com.vehicle.vehicleapi.dto.CarResponse;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -14,10 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 
 // import java.util.List;
 
+@Tag(name = "Cars",
+    description = """
+            Operations Related to Cars (Examples only not for production)
+            """
+)
 @RestController // Handles HTTP requests
 @RequestMapping("/cars") // maps out the specified area
 public class CarController {
