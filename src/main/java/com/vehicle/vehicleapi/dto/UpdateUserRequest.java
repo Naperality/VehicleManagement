@@ -1,6 +1,9 @@
 package com.vehicle.vehicleapi.dto;
 
 import lombok.*;
+
+import com.vehicle.vehicleapi.model.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "User Information Update Request")
@@ -15,5 +18,5 @@ public class UpdateUserRequest {
     private String email;
 
     @Schema(example = "USER")
-    private String role;
+    private Role role;
 }

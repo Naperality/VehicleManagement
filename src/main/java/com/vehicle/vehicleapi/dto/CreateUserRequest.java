@@ -2,7 +2,11 @@ package com.vehicle.vehicleapi.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import com.vehicle.vehicleapi.model.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "User Information Request")
@@ -24,6 +28,6 @@ public class CreateUserRequest {
     private String password;
 
     @Schema(example = "USER")
-    @NotBlank(message = "Role is required!")
-    private String role;
+    @NotNull(message = "Role is required!")
+    private Role role;
 }

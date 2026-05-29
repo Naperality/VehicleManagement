@@ -1,6 +1,9 @@
 package com.vehicle.vehicleapi.dto;
 
 import lombok.*;
+
+import com.vehicle.vehicleapi.model.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "User Information Response")
@@ -19,7 +22,7 @@ public class UserSummaryResponse {
     private String email;
 
     @Schema(example = "USER")
-    private String role;
+    private Role role;
 
     @Schema(example = "10")
     private int carCount;
