@@ -23,7 +23,7 @@ public class DatabaseUserDetailsService implements UserDetailsService{
         String username
     )throws UsernameNotFoundException{
         User user = repository
-                .findByUsername(username)
+                .findByUsernameOrEmail(username, username) // because only one area to look at
                 .orElseThrow(
                     () -> new UserNotFoundException(
                         "User Not Found"
