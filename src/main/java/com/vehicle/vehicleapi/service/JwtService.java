@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.vehicle.vehicleapi.model.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -46,11 +48,24 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+    public <T> T extractCustomClaim(
+        String token,
+        String claimName,
+        Class<T> type
+    ){
+        return extractClaim(
+            token,
+            claims -> claims.get(claimName, type)
+        );
+    }
+
     // generation of token
-    public String generateToken(String username){
+    public String generateToken(User user){
         return Jwts.builder()
-            .subject(username)
-            // .claim("role", role)
+            .subject(user.getUsername())
+            .claim("role", user.getRole().name())
+            .claim("userId", user.getId())
+            .claim("email", user.getEmail())
             .issuedAt(new Date())
             .expiration(
                 new Date(
@@ -70,11 +85,38 @@ public class JwtService {
         );
     }
 
+    // extracting roles
+    public String extractRole(String token){
+        return extractCustomClaim(
+            token,
+            "role",
+            String.class
+        );
+    }
+
     // extracting expiration date using extract claims
     public Date extractExpiration(String token){
         return extractClaim(
             token,
             Claims::getExpiration // because expiration date stored 
+        );
+    }
+
+    // extract userId
+    public Long extractUserId(String token){
+        return extractCustomClaim(
+            token,
+            "userId",
+            Long.class
+        );
+    }
+
+    //extract email
+    public String extractEmail(String token){
+        return extractCustomClaim(
+            token,
+            "email",
+            String.class
         );
     }
     

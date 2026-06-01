@@ -7,10 +7,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.vehicle.vehicleapi.dto.AuthResponse;
 import com.vehicle.vehicleapi.dto.CreateUserRequest;
 import com.vehicle.vehicleapi.dto.LoginRequest;
 import com.vehicle.vehicleapi.exception.RoleOutOfChoiceException;
 import com.vehicle.vehicleapi.exception.UserAlreadyExistException;
+import com.vehicle.vehicleapi.exception.UserNotFoundException;
 import com.vehicle.vehicleapi.model.Role;
 import com.vehicle.vehicleapi.model.User;
 import com.vehicle.vehicleapi.repository.UserRepository;
@@ -80,18 +82,18 @@ public class AuthService {
     }
 
     // log in user
-    public String login(LoginRequest request){
+    public AuthResponse login(LoginRequest request){
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 request.getUsername(), 
                 request.getPassword())  
         );
-        return jwtService.generateToken(
-            request.getUsername()
+        User user = repository.findByUsername(request.getUsername()).orElseThrow(
+            () -> new UserNotFoundException(
+                "User not found!"
+            )
         );
-    }
-
-    public String test(String token){
-        return jwtService.extractUsername(token)+" "+jwtService.extractExpiration(token);
+        AuthResponse response = new AuthResponse(jwtService.generateToken(user));
+        return response; 
     }
 }
