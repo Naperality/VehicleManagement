@@ -4,6 +4,7 @@ import com.vehicle.vehicleapi.model.Car;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface CarRepository extends JpaRepository<Car, Long>{
+public interface CarRepository extends JpaRepository<Car, Long>, JpaSpecificationExecutor<Car>{
     // private final List<Car> cars = new ArrayList<>();
 
     // public List<Car> findAll(){
@@ -69,6 +70,32 @@ public interface CarRepository extends JpaRepository<Car, Long>{
                 (:fuelType IS NULL OR c.fuelType = :fuelType)
         """)
     Page<Car> searchCars(
+        @Param("licensePlate") String licensePlate,
+        @Param("brand") String brand,
+        @Param("model") String model,
+        @Param("color") String color,
+        @Param("fuelType") String fuelType,
+        Pageable pageable
+    );
+
+    @Query("""
+            SELECT c
+            FROM Car c
+            WHERE
+                c.user.id = :userId
+            AND
+                (:licensePlate IS NULL OR LOWER(c.licensePlate) LIKE LOWER(CONCAT('%', :licensePlate, '%')))
+            AND
+                (:model IS NULL OR LOWER(c.model) LIKE LOWER(CONCAT('%', :model, '%')))
+            AND 
+                (:brand IS NULL OR LOWER(c.brand) LIKE LOWER(CONCAT('%', :brand, '%')))
+            AND
+                (:color IS NULL OR LOWER(c.color) LIKE LOWER(CONCAT('%', :color, '%')))
+            AND
+                (:fuelType IS NULL OR LOWER(c.fuelType) LIKE LOWER(CONCAT('%', :fuelType, '%')))
+        """)
+    Page<Car> searchCurrentUserCars(
+        @Param("userId") Long userId,
         @Param("licensePlate") String licensePlate,
         @Param("brand") String brand,
         @Param("model") String model,

@@ -17,6 +17,7 @@ import com.vehicle.vehicleapi.dto.ApiResponse;
 import com.vehicle.vehicleapi.dto.CarResponse;
 import com.vehicle.vehicleapi.dto.ChangePasswordRequest;
 import com.vehicle.vehicleapi.dto.CreateCarRequest;
+import com.vehicle.vehicleapi.dto.SearchCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateCarRequest;
 import com.vehicle.vehicleapi.dto.UpdateUserRequest;
 import com.vehicle.vehicleapi.dto.UserResponse;
@@ -109,30 +110,6 @@ public class UserController {
         );
     }
 
-    // endpoint for getting all cars of current user
-    @Operation(
-        summary = "Read Current User Car",
-        description = "Get all cars connected to current or logged in user"
-    )
-    @GetMapping("/cars")
-    public ResponseEntity<ApiResponse<Page<CarResponse>>> getCurrentUserCar(
-        @Parameter(
-            description = "Pageable Body"
-        )
-        Pageable pageable
-    ){
-        Page<Car> cars = service.getCurrentUserCar(pageable);
-        Page<CarResponse> responses = cars.map(carMapper::toResponse);
-
-        return ResponseEntity.ok(
-            new ApiResponse<>(
-                true,
-                "Cars retrieved",
-                responses
-            )
-        );
-    }
-
     // adding or creating new cars to current user
     @Operation(
         summary = "Create New Cars to Current User",
@@ -199,6 +176,59 @@ public class UserController {
                 true,
                 "Change Password Successfully!",
                 null
+            )
+        );
+    }
+
+    // delete car of current user
+    @Operation(
+        summary = "Deletes Car of Current User",
+        description = "Delete one car of currently logged in user via ticket"
+    )
+    @DeleteMapping("/cars/{ticket}")
+    public ResponseEntity<ApiResponse<Void>> deleteCurrentUserCar(
+        @Parameter(
+            description = "Ticket of car"
+        )
+        @PathVariable Long ticket
+    ){
+        service.deleteCurrentUserCar(ticket);
+        return ResponseEntity.ok(
+            new ApiResponse<>(
+                true,
+                "Vehicle Successfully Deleted!",
+                null
+            )
+        );
+    }
+
+    // user search specific cars and details params
+    @Operation(
+        summary = "Search Current User Cars",
+        description = "Search Currently logged in user cars according to details"
+    )
+    @GetMapping("/cars")
+    public ResponseEntity<ApiResponse<Page<CarResponse>>> searchCurrentUserCars(
+        @Parameter(
+            description = "Car Search request Body"
+        )
+        SearchCarRequest request,
+        @Parameter(
+            description = "Pageable Body"
+        )
+        Pageable pageable
+    ){
+        // System.out.println(request);
+        Page<Car> cars = service.searchCurrentUserCars(request, pageable);
+        Page<CarResponse> response = cars.map(carMapper::toResponse);
+
+
+        // System.out.println("SEARCH HIT");
+        return ResponseEntity.ok(
+            new ApiResponse<>(
+                true,
+                "Cars retrieved!",
+                response
             )
         );
     }
