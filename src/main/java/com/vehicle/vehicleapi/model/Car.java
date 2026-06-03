@@ -1,5 +1,7 @@
 package com.vehicle.vehicleapi.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*; // this is the shortcut for getters and setters and etc.
 
@@ -34,6 +36,9 @@ public class Car {
     @JoinColumn(name = "user_id")
     // @JsonBackReference
     private User user;
+
+    @OneToMany(mappedBy = "car")
+    private List<MaintenanceRecord> records;
 
     // all of this gone due to Lombok automatic
     // public Car() {} // for JPA, Hibernate internally creates objects dynamically.
