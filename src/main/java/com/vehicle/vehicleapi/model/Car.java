@@ -37,7 +37,7 @@ public class Car {
     // @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "car")
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MaintenanceRecord> records;
 
     // all of this gone due to Lombok automatic
