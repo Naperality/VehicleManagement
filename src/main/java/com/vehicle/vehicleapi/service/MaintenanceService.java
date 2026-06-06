@@ -1,6 +1,7 @@
 package com.vehicle.vehicleapi.service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -127,4 +128,42 @@ public class MaintenanceService {
         return records.map(mapper::toResponse);
     }
     
+    // delete current record of car
+    public void deleteRecord(
+        Long ticket,
+        Long recordId
+    ){
+        Car car = carRepository
+                .findById(ticket)
+                .orElseThrow(
+                    () -> new CarNotFoundException(
+                        "Vehicle Not Found!"
+                    )
+                );
+
+        User user = userService.getCurrentUser();
+
+        if(!car.getUser().getId().equals(user.getId())){
+            throw new UnauthorizedAccessException(
+                "Vehicle does not belong to user!"
+            );
+        }
+
+        MaintenanceRecord record = repository
+                .findById(recordId)
+                .orElseThrow(
+                    () -> new RecordsNotFoundException(
+                        "Record Not Found!"
+                    )
+                );
+
+        // extra security
+        if(!record.getCar().getTicket().equals(ticket)){
+            throw new UnauthorizedAccessException(
+                "Record does not belong to this vehicle!"
+            );
+        }
+
+        repository.delete(record);
+    }
 }
