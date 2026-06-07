@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.vehicle.vehicleapi.dto.ApiResponse;
 import com.vehicle.vehicleapi.dto.CreateMaintenanceRequest;
 import com.vehicle.vehicleapi.dto.MaintenanceResponse;
+import com.vehicle.vehicleapi.dto.UpdateMaintenanceRequest;
 import com.vehicle.vehicleapi.service.MaintenanceService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -107,6 +109,31 @@ public class MaintenanceController {
             new ApiResponse<>(
                 true,
                 "Record Deleted Successfully!",
+                null
+            )
+        );
+    }
+
+    // update endpoint
+    @PatchMapping("/{ticket}/maintenance/{recordId}")
+    public ResponseEntity<ApiResponse<Void>> updateRecord(
+        @PathVariable Long ticket,
+        @PathVariable Long recordId,
+
+        @Valid
+        @RequestBody
+        UpdateMaintenanceRequest request
+    ){
+        service.updateRecord(
+            ticket,
+            recordId,
+            request
+        );
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(
+                true,
+                "Record Updated Successfully!",
                 null
             )
         );
