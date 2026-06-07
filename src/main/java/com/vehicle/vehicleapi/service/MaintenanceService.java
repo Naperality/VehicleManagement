@@ -1,7 +1,6 @@
 package com.vehicle.vehicleapi.service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.vehicle.vehicleapi.dto.CreateMaintenanceRequest;
 import com.vehicle.vehicleapi.dto.MaintenanceResponse;
+import com.vehicle.vehicleapi.dto.UpdateMaintenanceRequest;
 import com.vehicle.vehicleapi.exception.CarNotFoundException;
 import com.vehicle.vehicleapi.exception.RecordsNotFoundException;
 import com.vehicle.vehicleapi.exception.UnauthorizedAccessException;
@@ -165,5 +165,93 @@ public class MaintenanceService {
         }
 
         repository.delete(record);
+    }
+
+    // update service for records in car
+    public void updateRecord(
+        Long ticket,
+        Long recordId,
+        UpdateMaintenanceRequest request
+    ){
+        Car car = carRepository
+                .findById(ticket)
+                .orElseThrow(
+                    () -> new CarNotFoundException(
+                        "Vehicle Not Found!"
+                    )
+                );
+
+        User user = userService.getCurrentUser();
+
+        if(!car.getUser().getId().equals(user.getId())){
+            throw new UnauthorizedAccessException(
+                "Vehicle does not belong to user!"
+            );
+        }
+
+        MaintenanceRecord record = repository
+                .findById(recordId)
+                .orElseThrow(
+                    () -> new RecordsNotFoundException(
+                        "Record Not Found!"
+                    )
+                );
+
+        if(!record.getCar().getTicket().equals(ticket)){
+            throw new UnauthorizedAccessException(
+                "Record does not belong to this vehicle!"
+            );
+        }
+
+        if(
+            request.getServiceType() != null
+        ){
+            record.setServiceType(
+                request.getServiceType()
+            );
+        }
+
+        if(
+            request.getDescription() != null
+        ){
+            record.setDescription(
+                request.getDescription()
+            );
+        }
+
+        if(
+            request.getMaintenanceDate() != null
+        ){
+            if(request.getMaintenanceDate()
+                    .isAfter(LocalDate.now())){
+                throw new IllegalArgumentException(
+                    "Maintenance date cannot be in the future"
+                );
+            }
+
+            record.setMaintenanceDate(
+                request.getMaintenanceDate()
+            );
+        }
+
+        if(request.getMileage() != null){
+            record.setMileage(
+                request.getMileage()
+            );
+        }
+
+        if(request.getCost() != null){
+            record.setCost(
+                request.getCost()
+            );
+        }
+
+        if(request.getStatus() != null){
+            record.setStatus(
+                request.getStatus()
+            );
+        }
+
+        repository.save(record);
     }
 }
