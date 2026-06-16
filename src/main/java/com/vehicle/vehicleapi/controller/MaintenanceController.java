@@ -71,6 +71,29 @@ public class MaintenanceController {
         );
     }
 
+    // endpoint for get current user records
+    @Operation(
+        summary = "Current User Records",
+        description = "Gets all the current user records"
+    )
+    @GetMapping("/maintenance")
+    public ResponseEntity<ApiResponse<Page<MaintenanceResponse>>> getUserRecords(
+        @Parameter(
+            description = "Pageable Information"
+        )
+        Pageable pageable
+    ){
+        Page<MaintenanceResponse> records = service.getUserRecords(pageable);
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(
+                true,
+                "Records Retireved Successfully!",
+                records
+            )
+        );
+    }
+
     // endpoint for get current user current car records
     @Operation(
         summary = "Current Car Record",
