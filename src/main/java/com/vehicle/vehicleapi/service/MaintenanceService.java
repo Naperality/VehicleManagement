@@ -98,6 +98,25 @@ public class MaintenanceService {
         repository.save(record);
     }
 
+    // get records of the current user
+    public Page<MaintenanceResponse> getUserRecords(
+        Pageable pageable
+    ){
+        User user = userService.getCurrentUser();
+        Page<MaintenanceRecord> records = 
+            repository.findByCarUserId(
+                user.getId(), 
+                pageable
+            );
+        
+            if(records.isEmpty()){
+                throw new RecordsNotFoundException(
+                    "No Records yet!"
+                );
+            }
+        return records.map(mapper::toResponse);
+    }
+
     // get records of current car
     public Page<MaintenanceResponse> getCarRecords(
         Long id,
