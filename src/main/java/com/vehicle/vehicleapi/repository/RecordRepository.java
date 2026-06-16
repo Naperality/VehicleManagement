@@ -8,4 +8,5 @@ import com.vehicle.vehicleapi.model.MaintenanceRecord;
 
 public interface RecordRepository extends JpaRepository<MaintenanceRecord, Long>{
     Page<MaintenanceRecord> findByCarTicket(Long ticket, Pageable pageable);
+    Page<MaintenanceRecord> findByCarUserId(Long userId, Pageable pageable);
 }
